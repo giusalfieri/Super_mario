@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="docs/SMB3.png" alt="Super Mario Icon" width="200">
+  <img src="docs/SMB3.png" alt="Super Mario Icon" width="300">
 
   # Super Mario World 6-9
 
