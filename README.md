@@ -34,7 +34,7 @@ This project is a faithful reproduction of the **World 6-9** level from the Supe
 
 Here is the complete layout of the level we recreated. The game features underwater mechanics, pipes, and complex collisions just like the original.
 
-![World 6-9 Map](SMB3_World_6-9_Map.png)
+![World 6-9 Map](docs/SMB3_World_6-9_Map.png)
 
 ---
 
