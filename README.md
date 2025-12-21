@@ -20,14 +20,6 @@
 
 This project is a faithful reproduction of the **World 6-9** level from the Super Mario universe. The goal was to build a platformer game engine from scratch using **C++** and **Qt**, handling physics, collisions, and enemy AI.
 
-## <a name="contributors">👥 Contributors</a>
-
-| Name              |  GitHub                                               |
-|-------------------|-------------------------------------------------------|
-| Giuseppe Alfieri  | [@giusalfieri](https://github.com/giusalfieri)        |
-| Nico Fiorini      | [@capocattiveria](https://github.com/capocattiveria)  |
-| Jacopo Saccocci   |                                                       |
-
 ---
 
 ## 🗺️ Level Map
@@ -55,6 +47,10 @@ Here is the complete layout of the level we recreated. The game features underwa
 
 ---
 
-## ⚠️ Disclaimer
+## <a name="contributors">👥 Contributors</a>
 
-This is an educational project. Super Mario and all related assets are property of **Nintendo**.
+| Name              |  GitHub                                               |
+|-------------------|-------------------------------------------------------|
+| Giuseppe Alfieri  | [@giusalfieri](https://github.com/giusalfieri)        |
+| Nico Fiorini      | [@capocattiveria](https://github.com/capocattiveria)  |
+| Jacopo Saccocci   |                                                       |
