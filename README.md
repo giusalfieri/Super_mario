@@ -10,7 +10,7 @@
 
   <br>
 
-  **A recreation of the famous World 6-9 level using C++ and the Qt Framework.**
+  **A recreation of the famous World 6-9 level using [C++](https://isocpp.org/) and the [Qt Framework](https://www.qt.io/).**
 
 </div>
 
@@ -29,11 +29,6 @@ Here is the complete layout of the level we recreated. The game features underwa
 ![World 6-9 Map](docs/SMB3_World_6-9_Map.png)
 
 ---
-
-## 🛠️ Built With
-
-* **[C++](https://isocpp.org/)** - The core programming language.
-* **[Qt Framework](https://www.qt.io/)** - Used for graphics rendering and window management.
 
 ## 🚀 How to Run
 
