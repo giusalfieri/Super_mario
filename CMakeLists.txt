@@ -1,6 +1,6 @@
-project( supermario3 )
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+project( supermario3 )
 
 set (CMAKE_CXX_STANDARD 17)
 
