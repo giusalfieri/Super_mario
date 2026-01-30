@@ -1,5 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-	<file>sounds/super-mario-rap.wav</file>
+	<file>../sounds/super-mario-rap.wav</file>
 </qresource>
 </RCC>

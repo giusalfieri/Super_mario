@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-	<file>sounds/overworld-hurry-up.wav</file>
+	<file>../sounds/overworld-hurry-up.wav</file>
 </qresource>
 </RCC>
 
