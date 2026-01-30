@@ -89,7 +89,6 @@ cmake --build .
 * **Terminal**: Locate and run the generated executable within the `build` directory.
 
 > [!NOTE] 
-> **Note for Windows Users**
 > The CMake configuration is scripted to automatically invoke `windeployqt`. This utility bundles all required Qt shared libraries (.dll) and essential plugins (audio, platforms) directly into the output folder, ensuring a seamless "out-of-the-box" execution experience.
 
 </details>
