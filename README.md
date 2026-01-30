@@ -30,6 +30,27 @@ Here is the complete layout of the level we recreated. The game features underwa
 
 ---
 
+## ⌨️ Controls
+
+### General
+- **ENTER** — Start the game (from main menu)
+- **R** — Reset game
+- **P** — Pause / Resume game
+- **G** — Toggle debug grid
+- **C** — Toggle object colliders
+
+### Mario Actions
+- **Arrows** — Movement (Left/Right) and Crouch (Down)
+- **SPACE** — Jump / Swim
+- **Z** — Run (hold for speed)
+- **T** — Debug Transformation (cycles through power-ups)
+
+### Combat & Special
+- **B** — Launch fireballs (Fire Mario) or Tail spin (Raccoon Mario)
+- **Z (hold) + SPACE** — Fly (Raccoon Mario when super-running)
+
+---
+
 ## 🚀 How to Run
 
 Choose your preferred way to get the game running:
