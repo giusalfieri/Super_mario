@@ -43,8 +43,9 @@ If you just want to play without compiling the code:
 2. Download the **`SuperMario3Installer.exe`** file.
 3. Run the installer and follow the on-screen instructions to set up the game.
 
-> [!CAUTION]
-> **Windows 64-bit only** > This installer is currently compatible only with 64-bit Windows systems.
+> **⚠️ Windows 64-bit only**
+> This installer is currently compatible only with 64-bit Windows systems.
+
 </details>
 
 <details>
