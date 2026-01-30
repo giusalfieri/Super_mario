@@ -88,8 +88,9 @@ cmake --build .
 * **Visual Studio**: Select `supermario3.exe` from the startup item dropdown and press **F5** to compile and launch the game.
 * **Terminal**: Locate and run the generated executable within the `build` directory.
 
-> [!Note for Windows Users]
->  The CMake configuration is scripted to automatically invoke `windeployqt`. This utility bundles all required Qt shared libraries (.dll) and essential plugins (audio, platforms) directly into the output folder, ensuring a seamless "out-of-the-box" execution experience.
+> [!NOTE] 
+> **Note for Windows Users**
+> The CMake configuration is scripted to automatically invoke `windeployqt`. This utility bundles all required Qt shared libraries (.dll) and essential plugins (audio, platforms) directly into the output folder, ensuring a seamless "out-of-the-box" execution experience.
 
 </details>
 
