@@ -101,4 +101,4 @@ Our development team has worked to recreate this classic experience with modern 
 |-----------------|------------------------------------------------------|
 | **Giuseppe Alfieri** | [@giusalfieri](https://github.com/giusalfieri)       |
 | **Nico Fiorini** | [@capocattiveria](https://github.com/capocattiveria) |
-| **Jacopo Saccocci** | _Core Contributor_                                   |
+| **Jacopo Saccocci** |                                  |
