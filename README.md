@@ -28,6 +28,11 @@ Here is the complete layout of the level we recreated. The game features underwa
 
 ![World 6-9 Map](docs/SMB3_World_6-9_Map.png)
 
+### 📺 Gameplay Overview
+
+Watch the following video for a gameplay overview:  
+https://www.youtube.com/watch?v=gH-bdCRIQQ8
+
 ---
 
 ## ⌨️ Controls
