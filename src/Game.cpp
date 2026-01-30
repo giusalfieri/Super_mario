@@ -41,6 +41,10 @@ Game::Game(QWidget* parent) : QGraphicsView(parent)
 	
 	setFrameShape(QFrame::NoFrame);
 	setInteractive(false);		// disables events
+
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);  // Fixes "color trails" by redrawing the entire viewport
+    setCacheMode(QGraphicsView::CacheBackground);             // Optimizes background rendering performance
+	
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
@@ -623,4 +627,5 @@ void Game::fastResetOfGameTime()
 	game_time->setInterval(2);
 	game_time->start();
 	Sounds::instance()->play("timer-reset");
+
 }
