@@ -40,9 +40,11 @@ Choose your preferred way to get the game running:
 If you just want to play without compiling the code:
 
 1. Go to the **[Releases](https://github.com/giusalfieri/Super_mario/releases)** page.
-2. Download the `.zip` file for your OS (e.g., `SuperMario_Win64.zip`).
-3. Extract the archive to a folder of your choice.
-4. Run the executable `supermario3.exe` (Windows) or `supermario3` (Linux/Mac).
+2. Download the **`SuperMario3Installer.exe`** file.
+3. Run the installer and follow the on-screen instructions to set up the game.
+
+> [!CAUTION]
+> **Windows 64-bit only** > This installer is currently compatible only with 64-bit Windows systems.
 </details>
 
 <details>
@@ -88,7 +90,7 @@ cmake --build .
 * **Visual Studio**: Select `supermario3.exe` from the startup item dropdown and press **F5** to compile and launch the game.
 * **Terminal**: Locate and run the generated executable within the `build` directory.
 
-> [!NOTE] 
+> **Note for Windows Users**
 > The CMake configuration is scripted to automatically invoke `windeployqt`. This utility bundles all required Qt shared libraries (.dll) and essential plugins (audio, platforms) directly into the output folder, ensuring a seamless "out-of-the-box" execution experience.
 
 </details>
