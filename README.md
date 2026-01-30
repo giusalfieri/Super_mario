@@ -39,7 +39,7 @@ Choose your preferred way to get the game running:
 
 If you just want to play without compiling the code:
 
-1. Go to the **[Releases](https://github.com/tuo-username/super-mario-world-6-9/releases)** page.
+1. Go to the **[Releases](https://github.com/giusalfieri/Super_mario/releases)** page.
 2. Download the `.zip` file for your OS (e.g., `SuperMario_Win64.zip`).
 3. Extract the archive to a folder of your choice.
 4. Run the executable `supermario3.exe` (Windows) or `supermario3` (Linux/Mac).
@@ -57,12 +57,13 @@ Follow these detailed instructions to set up the environment and compile the pro
     * **Windows**: Visual Studio 2019/2022 with C++ workload.
     * **Linux**: GCC/G++.
     * **Mac**: Clang (Xcode).
-* **Qt 5.15.2 DevBinaries**: Download the specific binaries for your OS from our [Releases](https://github.com/tuo-username/super-mario-world-6-9/releases) (e.g., `Qt5.15.2-Win64-MSVC2019-DevBinaries.zip`) and extract them locally.
+* **Qt 5.15.2 DevBinaries**: Download the specific binaries for your OS from our [Releases](https://github.com/giusalfieri/Super_mario/releases) (e.g., `qt-5.15.2-win64-msvc.zip
+`) and extract them locally.
 
 ### 2. Cloning
 ```bash
-git clone [https://github.com/tuo-username/super-mario-world-6-9.git](https://github.com/tuo-username/super-mario-world-6-9.git)
-cd super-mario-world-6-9
+git clone https://github.com/giusalfieri/Super_mario.git
+cd Super_mario
 ```
 
 ### 3. Configuration (Windows - Visual Studio)
@@ -87,7 +88,8 @@ cmake --build .
 * **Visual Studio**: Select `supermario3.exe` from the startup item dropdown and press **F5** to compile and launch the game.
 * **Terminal**: Locate and run the generated executable within the `build` directory.
 
-> **Note for Windows Users**: The CMake configuration is scripted to automatically invoke `windeployqt`. This utility bundles all required Qt shared libraries (.dll) and essential plugins (audio, platforms) directly into the output folder, ensuring a seamless "out-of-the-box" execution experience.
+> [!Note for Windows Users]
+>  The CMake configuration is scripted to automatically invoke `windeployqt`. This utility bundles all required Qt shared libraries (.dll) and essential plugins (audio, platforms) directly into the output folder, ensuring a seamless "out-of-the-box" execution experience.
 
 </details>
 
