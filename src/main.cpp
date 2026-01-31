@@ -8,7 +8,14 @@
 int main(int argc, char *argv[])
 {
 
-    // create Qt application
+    
+	// Enable automatic scaling for High DPI (4K/Retina) displays
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
+	// Ensure that pixmaps use high-resolution versions when available
+	QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+	
+	// create Qt application
     QApplication app(argc, argv);
 
 	// instance sprites and sounds
@@ -33,4 +40,5 @@ int main(int argc, char *argv[])
     // launch Qt event loop
     return app.exec();
 	
+
 }
