@@ -505,6 +505,7 @@ void Game::changeLevel(Direction pipe_travel_dir)
 {
 	engine.stop();
 	stopMusic();
+	stopGameTime();
 
 	// set black screen
 	if (!black_scene)
@@ -515,10 +516,17 @@ void Game::changeLevel(Direction pipe_travel_dir)
 	else
 		setScene(black_scene);
 
-	Hud::instance()->hide();
 
 	// after 200 ms the screen has been obscured show it again
-	QTimer::singleShot(200, this, [this]() { engine.start(); setScene(cur_scene); Hud::instance()->show(); playMusic(); });
+	QTimer::singleShot(200, this, [this]() { 
+		engine.start(); 
+		setScene(cur_scene); 
+		playMusic(); 
+		
+		if (cur_state == RUNNING || cur_state == CHANGE_LEVEL)
+			game_time->start();
+
+		});
 	
 	if (pipe_travel_dir == DOWN)
 		nextLevel();
@@ -629,3 +637,4 @@ void Game::fastResetOfGameTime()
 	Sounds::instance()->play("timer-reset");
 
 }
+
