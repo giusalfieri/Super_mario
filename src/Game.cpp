@@ -27,11 +27,15 @@ Game* Game::instance(QWidget* parent)
 Game::Game(QWidget* parent) : QGraphicsView(parent)
 {
 	// setup scene/view
-	scene1 = new QGraphicsScene();
-	scene2 = nullptr;
-	scene3 = nullptr;
+	// Inizializzazione scene (vettore levels)
+	levels.push_back(new QGraphicsScene()); // Sostituisce scene1
+	levels.push_back(nullptr);              // Sostituisce scene2 (lazy loading)
+	levels.push_back(nullptr);              // Sostituisce scene3 (lazy loading)
+
+
+	currentLevelIdx = 0;
+	cur_scene = levels[0];
 	black_scene = nullptr;
-	cur_scene = scene1;
 	
 	lives = 4;
 	score = 0;
@@ -39,30 +43,29 @@ Game::Game(QWidget* parent) : QGraphicsView(parent)
 	scale(3.0, 3.0);
 	centerOn(0, 0);
 	
+
+	
+	setViewportUpdateMode(QGraphicsView::FullViewportUpdate); 
+	setCacheMode(QGraphicsView::CacheBackground);     
+
+
 	setFrameShape(QFrame::NoFrame);
 	setInteractive(false);		// disables events
-
-    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);  // Fixes "color trails" by redrawing the entire viewport
-    setCacheMode(QGraphicsView::CacheBackground);             // Optimizes background rendering performance
-	
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
 	// setup game music
-	
-	music1      = new QSound(":/sounds/overworld.wav");
-	music2      = new QSound(":/sounds/underwater.wav");
-	music3      = new QSound(":/sounds/super-mario-rap.wav");
-	fast_music1 = new QSound(":/sounds/overworld-hurry-up.wav");
-	fast_music2 = new QSound(":/sounds/underwater-hurry-up.wav");
-	fast_music3 = new QSound(":/sounds/underground-hurry-up.wav");
-	music1->setLoops(QSound::Infinite);
-	music2->setLoops(QSound::Infinite);
-	music3->setLoops(QSound::Infinite);
-	//fast_music1->setLoops(QSound::Infinite);
-	
-	fast_music2->setLoops(QSound::Infinite);
-	fast_music3->setLoops(QSound::Infinite);
+	// Inizializzazione playlist musicale
+	playlist.push_back(new QSound(":/sounds/overworld.wav"));
+	playlist.push_back(new QSound(":/sounds/underwater.wav"));
+	playlist.push_back(new QSound(":/sounds/super-mario-rap.wav"));
+
+	fast_playlist.push_back(new QSound(":/sounds/overworld-hurry-up.wav"));
+	fast_playlist.push_back(new QSound(":/sounds/underwater-hurry-up.wav"));
+	fast_playlist.push_back(new QSound(":/sounds/underground-hurry-up.wav"));
+
+	for (auto s : playlist) s->setLoops(QSound::Infinite);
+	for (auto s : fast_playlist) s->setLoops(QSound::Infinite);
 
 	// initialize mario
 	mario = nullptr;
@@ -95,45 +98,50 @@ Game::Game(QWidget* parent) : QGraphicsView(parent)
 // reset game
 void Game::reset()
 {
+	// 1. Reset degli stati e dell'indice di livello
 	cur_state = READY;
-	cur_scene = scene1;
+	currentLevelIdx = 0; // Torna alla prima parte del livello
+
+	// 2. Ripristina la scena iniziale dal vettore
+	cur_scene = levels[0];
 	setScene(cur_scene);
 
+	// 3. Ferma i motori di gioco
 	mario = nullptr;
 	engine.stop();
-
 	game_time->stop();
-	if(game_time->interval() == 2)
+
+	// Ripristina l'intervallo del timer se era stato accelerato a fine livello
+	if (game_time->interval() == 2)
 		game_time->setInterval(600);
 
 	stopMusic();
+	hurry_up = false; // Reset del flag della musica veloce
 
-	if(hurry_up)
-		hurry_up = false;
-	
-	// clear 
-	scene1->clear();
-	if (scene2)
+	// 4. Pulisci TUTTE le scene caricate nel vettore
+	// Questo sostituisce i blocchi "if (scene2) ..." manuali
+	for (auto& scene : levels)
 	{
-		scene2->clear();
-		scene2 = nullptr;
+		if (scene != nullptr) // Controllo vitale!
+		{
+			scene->clear();
+		}
 	}
-	if (scene3)
-	{
-		scene3->clear();
-		scene3 = nullptr;
-	}
+
+	// Nota: manteniamo levels[0] allocato, mentre le altre scene 
+	// verranno ricaricate via Lazy Loading in switchSubLevel.
+	// Se vuoi liberare memoria totalmente: levels[1] = nullptr; levels[2] = nullptr;
+
+	// 5. Reset debug e contatori
 	grid.clear();
-
 	if (clear_level_counter >= 0)
 		clear_level_counter = -1;
-	
-	// display welcome message  
+
+	// 6. Mostra la schermata principale (Splash Screen)
 	cur_scene->setBackgroundBrush(QBrush(Qt::black));
 	cur_scene->addPixmap(Sprites::instance()->get("main-screen"));
 	centerOn(0, 0);
 }
-
 
 void Game::gameover()
 {
@@ -171,49 +179,55 @@ void Game::gameover()
 	
 }
 
-// start new game
 void Game::start()
 {
 	if (cur_state == READY)
 	{
-		scene1->clear();
+		// 1. Pulisci la prima scena dal vettore e avvia i timer
+		levels[0]->clear();
 		engine.start();
 		game_time->start();
-		
-		cur_level_name = "World 6-9-1";
 
-		// load level
-		mario = LevelManager::load(cur_level_name,scene1);
+		cur_level_name = "World 6-9-1";
+		currentLevelIdx = 0; // Assicura che l'indice sia a 0
+
+		// 2. Carica il livello nella prima scena del vettore
+		mario = LevelManager::load(cur_level_name, levels[0]);
 
 		Hud::instance()->start();
-		
-		//update attribbute
+
+		// 3. Sincronizza i dati di Mario
 		mario->updateLives(lives);
 		mario->updateScore(score);
 
-		// add debug grid                                                        
+		// 4. Configurazione della griglia di debug
+		const int TILE = 16;
 		for (int i = 0; i <= 27; i++)
-			grid.push_back(new QGraphicsLineItem(0, i*16, 127*16, i*16));
+			grid.push_back(new QGraphicsLineItem(0, i * TILE, 127 * TILE, i * TILE));
 		for (int j = 0; j <= 97; j++)
-			grid.push_back(new QGraphicsLineItem(j*16, 0, j*16, 27*16));
+			grid.push_back(new QGraphicsLineItem(j * TILE, 0, j * TILE, 27 * TILE));
 
 		for (auto& l : grid)
 		{
 			l->setPen(QPen(QBrush(Qt::gray), 0.5));
 			l->setZValue(100);
-			cur_scene->addItem(l);
+			levels[0]->addItem(l); // Aggiunge alla scena iniziale
 			l->setVisible(false);
 		}
 
+		// 5. Gestione errori di caricamento o avvio musica
 		if (!mario)
 		{
-			cur_scene->setBackgroundBrush(QBrush(QColor(242, 204, 204)));
-			QGraphicsTextItem* text = cur_scene->addText("Error when loading level");
+			levels[0]->setBackgroundBrush(QBrush(QColor(242, 204, 204)));
+			QGraphicsTextItem* text = levels[0]->addText("Error when loading level");
 			text->setPos(300, 90);
 			centerOn(text);
 		}
 		else
-			music1->play();
+		{
+			// Avvia la musica corrispondente al primo sotto-livello
+			playlist[0]->play();
+		}
 
 		cur_state = RUNNING;
 	}
@@ -258,19 +272,27 @@ void Game::toogleColliders()
 // play music
 void Game::playMusic()
 {
-	if (hurry_up)
-		(cur_level_name=="World 6-9-1") ? fast_music1->play() : (cur_level_name=="World 6-9-2") ? fast_music2->play() : fast_music3->play();
-	else 
-		(cur_level_name=="World 6-9-1") ? music1->play() : (cur_level_name=="World 6-9-2") ? music2->play() : music3->play();
+	// Verifichiamo che l'indice sia valido per evitare crash
+	if (currentLevelIdx >= 0 && currentLevelIdx < static_cast<int>(playlist.size()))
+	{
+		if (hurry_up)
+			fast_playlist[currentLevelIdx]->play(); // Usa il vettore della musica veloce
+		else
+			playlist[currentLevelIdx]->play();      // Usa il vettore della musica normale
+	}
 }
 
 // stop music
 void Game::stopMusic()
 {
-	if (hurry_up)
-		(cur_level_name == "World 6-9-1") ? fast_music1->stop() : (cur_level_name == "World 6-9-2") ? fast_music2->stop() : fast_music3->stop();
-	else
-		(cur_level_name == "World 6-9-1") ? music1->stop() : (cur_level_name == "World 6-9-2") ? music2->stop() : music3->stop();
+	// Verifichiamo che l'indice sia valido
+	if (currentLevelIdx >= 0 && currentLevelIdx < static_cast<int>(playlist.size()))
+	{
+		if (hurry_up)
+			fast_playlist[currentLevelIdx]->stop();
+		else
+			playlist[currentLevelIdx]->stop();
+	}
 }
 
 void Game::keyPressEvent(QKeyEvent* e)
@@ -410,32 +432,30 @@ void Game::wheelEvent(QWheelEvent* e)
 
 void Game::advance()
 {
-	// do nothing if game is not running
+	// 1.Do nothing if game is not running
 	if (cur_state != RUNNING && cur_state != CHANGE_LEVEL && cur_state != END_OF_LEVEL)
 		return;
 
+	// Gestione transizione tubo
 	if (mario->isEnteringPipe())
-	{
 		cur_state = CHANGE_LEVEL;
-	}
 
-	// if mario is dead, game over
+	// Controllo morte di Mario
 	if (mario->isDead() && cur_state != CHANGE_LEVEL)
 		gameover();
 
-	// tell all game objects to animate and advance in the scene
+	// 2. Ciclo di aggiornamento oggetti nella scena corrente
 	for (auto& item : cur_scene->items())
 	{
-		
 		Object* obj = dynamic_cast<Object*>(item);
 		if (obj)
 		{
 			obj->animate();
 			obj->advance();
 
-			// destroy died Entity objects, except Mario
+			// Pulizia entità morte (nemici, power-up consumati)
 			Entity* entity_obj = dynamic_cast<Entity*>(obj);
-			Mario*  mario_obj  = dynamic_cast<Mario*>(obj);
+			Mario* mario_obj = dynamic_cast<Mario*>(obj);
 			if (entity_obj && !mario_obj && entity_obj->isDead())
 			{
 				cur_scene->removeItem(entity_obj);
@@ -444,45 +464,52 @@ void Game::advance()
 		}
 	}
 
-	if (cur_state != END_OF_LEVEL) 
+	// 3. Gestione Telecamera e Fine Livello
+	if (cur_state != END_OF_LEVEL)
 	{
-		if (!mario->isRaccoonAttack() && !mario->isDying())// center view on shape of Mario
-			centerOn(QPointF(mario->pos().x() + mario->shape().currentPosition().x(), mario->pos().y()+mario->boundingRect().height()));
+		// Segue Mario solo se non sta attaccando (Raccoon) o morendo
+		if (!mario->isRaccoonAttack() && !mario->isDying())
+		{
+			centerOn(QPointF(mario->pos().x() + mario->shape().currentPosition().x(),
+				mario->pos().y() + mario->boundingRect().height()));
+		}
 	}
 	else
 	{
-			centerOn(QPointF(88 * 16, 337));  // center view on GoalRoulette
+		// LOGICA FINE LIVELLO (World 6-9)
+		const int TILE = 16;
+		centerOn(QPointF(88 * TILE, 337)); // Centra sul Goal Roulette
 
-			if (mario->pos().x() >= 96 * 16)
+		if (mario->pos().x() >= 96 * TILE)
+		{
+			clear_level_counter++;
+
+			// Sequenza di sblocco testi e card
+			if (clear_level_counter == 0)
+				new EndLevelText(QPoint(1337, 267), "CLEAR COURSE!");
+
+			if (clear_level_counter == 23)
+				new EndLevelText(QPoint(1337, 294), "YOU GOT A CARD");
+
+			else if (clear_level_counter == 43)
 			{
-				clear_level_counter++;
-
-				if (clear_level_counter == 0)
-					new EndLevelText(QPoint(1337, 267), "CLEAR COURSE!");
-
-				if (clear_level_counter == 23)
-					new EndLevelText(QPoint(1337, 294), "YOU GOT A CARD");
-
-				else if (clear_level_counter == 43)
-				{
-					new Card(QPoint(1464, 299), mario->ItemTaken(), scene1);
-					Hud::instance()->updatePanel("CardsTaken", mario->ItemTaken());
-					
-				}
-				else if (clear_level_counter == 170)
-					fastResetOfGameTime();
-				else if (clear_level_counter == 300)
-				{
-					Hud::instance()->reset();
-					lives = mario->getLives();
-					score = mario->getScore();
-					reset();
-				}
+				// CORRETTO: Usa levels[0] invece di scene1
+				new Card(QPoint(1464, 299), mario->ItemTaken(), levels[0]);
+				Hud::instance()->updatePanel("CardsTaken", mario->ItemTaken());
 			}
-		
+			else if (clear_level_counter == 170)
+				fastResetOfGameTime();
+			else if (clear_level_counter == 300)
+			{
+				// Fine sequenza: salva dati e resetta il gioco
+				Hud::instance()->reset();
+				lives = mario->getLives();
+				score = mario->getScore();
+				reset();
+			}
+		}
 	}
 }
-
 // freeze/unfreeze all entities
 void Game::setFreezed(bool freezed)
 {
@@ -507,84 +534,85 @@ void Game::changeLevel(Direction pipe_travel_dir)
 	stopMusic();
 	stopGameTime();
 
-	// set black screen
 	if (!black_scene)
 	{
 		black_scene = new QGraphicsScene();
-		black_scene->setBackgroundBrush(QBrush(QColor(0, 0, 0)));
+		black_scene->setBackgroundBrush(QBrush(Qt::black));
 	}
-	else
-		setScene(black_scene);
+	setScene(black_scene);
 
-
-	// after 200 ms the screen has been obscured show it again
-	QTimer::singleShot(200, this, [this]() { 
-		engine.start(); 
-		setScene(cur_scene); 
-		playMusic(); 
-		
-		if (cur_state == RUNNING || cur_state == CHANGE_LEVEL)
-			game_time->start();
-
-		});
 	
 	if (pipe_travel_dir == DOWN)
-		nextLevel();
+		switchSubLevel(1);
 	else if (pipe_travel_dir == UP)
-		prevLevel();
+		switchSubLevel(-1);
 
+	QTimer::singleShot(200, this, [this]() {
+		// Controllo di sicurezza prima di impostare la scena
+		if (cur_scene != nullptr)
+		{
+			setScene(cur_scene);
+			engine.start();
+			playMusic();
+			if (cur_state == RUNNING || cur_state == CHANGE_LEVEL)
+				game_time->start();
+		}
+		});
 }
 
-void Game::nextLevel()
+QPointF Game::getSpawnPoint(int idx, int direction)
 {
-	cur_level_name = ((mario->getLevelName() == "World 6-9-1") ? "World 6-9-2" : "World 6-9-3");
-	
-	if (cur_level_name == "World 6-9-2")
-	{
+	const int TILE = 16; // Dimensione base dei blocchi
 
-		scene1->removeItem(mario);
-		if (!scene2)
-		{
-			scene2 = new QGraphicsScene();
-			cur_scene = scene2;
-			LevelManager::load(cur_level_name, cur_scene);
-		}
-		else cur_scene = scene2;	
-
-	}
-	else if (cur_level_name == "World 6-9-3" )
+	if (direction == 1) // MOVIMENTO IN AVANTI (Entra nel tubo per scendere)
 	{
-		scene2->removeItem(mario);
-		if (!scene3)
-		{
-			scene3 = new QGraphicsScene();
-			cur_scene = scene3;
-			LevelManager::load(cur_level_name, cur_scene);
-		}
-		else cur_scene = scene3;	
+		int x_tiles = (idx == 1) ? 4 : 8;
+		return QPointF(x_tiles * TILE + 5, 0);
 	}
-	
-	cur_scene->addItem(mario);
-	mario->setLevelName(cur_level_name);
-	mario->setPos(((cur_level_name == "World 6-9-2" ? 4 : 8)*16)+5, 0);	
+	else // MOVIMENTO ALL'INDIETRO (Entra nel tubo per salire)
+	{
+		int x_tiles = (idx == 1) ? 70 : 52;
+		int y_tiles = 25;
+		qreal y_offset = mario->isRaccoon() ? 4 : 2; // Offset diverso per Mario Procione
+		return QPointF(x_tiles * TILE + 5, y_tiles * TILE - y_offset);
+	}
 }
 
-void Game::prevLevel()
+void Game::switchSubLevel(int direction)
 {
-	cur_level_name = ((mario->getLevelName() == "World 6-9-3") ? "World 6-9-2" : "World 6-9-1");
+	if (!mario || !cur_scene) return;
 
-	(mario->getLevelName() == "World 6-9-3") ? scene3->removeItem(mario) : scene2->removeItem(mario);
+	// Rimuovi Mario dalla vecchia scena prima di cambiare indice
+	cur_scene->removeItem(mario);
 
-	cur_scene = (mario->getLevelName() == "World 6-9-3") ? scene2 : scene1;
+	currentLevelIdx += direction;
+	if (currentLevelIdx < 0) currentLevelIdx = 0;
+	if (currentLevelIdx > 2) currentLevelIdx = 2;
 
-	cur_scene->addItem(mario);
-	mario->setLevelName(cur_level_name);
-	
-	if (mario->isRaccoon())
-		mario->setPos(((cur_level_name == "World 6-9-2" ? 70 : 52) * 16) + 5, ((cur_level_name == "World 6-9-2" ? 25 : 25) * 16) - 4);
+	cur_level_name = "World 6-9-" + std::to_string(currentLevelIdx + 1);
+
+	if (levels[currentLevelIdx] == nullptr)
+	{
+		levels[currentLevelIdx] = new QGraphicsScene();
+		cur_scene = levels[currentLevelIdx];          
+		LevelManager::load(cur_level_name, cur_scene);
+	}
 	else
-		mario->setPos( ((cur_level_name=="World 6-9-2" ? 70:52) * 16)+5, ((cur_level_name=="World 6-9-2" ? 25:25) * 16)-2);
-	
+	{
+		cur_scene = levels[currentLevelIdx];
+	}
+
+
+	// AGGIUNGI SEMPRE MARIO: lui è l'unica istanza che viaggia tra le scene
+	cur_scene->addItem(mario);
+	mario->setLevelName(cur_level_name);
+
+
+	// Imposta posizione e centra la telecamera immediatamente per evitare il vuoto nero
+	QPointF spawn = getSpawnPoint(currentLevelIdx, direction);
+	mario->setPos(spawn);
+	centerOn(mario);
+
 }
 
 void Game::hurryUp()
@@ -635,6 +663,4 @@ void Game::fastResetOfGameTime()
 	game_time->setInterval(2);
 	game_time->start();
 	Sounds::instance()->play("timer-reset");
-
 }
-
