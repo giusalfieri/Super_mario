@@ -22,11 +22,8 @@ class Game : public QGraphicsView
 		Game(QWidget* parent = nullptr);	     // Singleton design pattern
 
 	
-		QGraphicsScene* cur_scene;       // the scene used to render current game level (2D)
-		//QGraphicsScene* scene1;          // the scene used to render level-1 
-		//QGraphicsScene* scene2;          // the scene used to render level-2 
-		//QGraphicsScene* scene3;          // the scene used to render level-3
-		std::vector<QGraphicsScene*> levels; // Sostituisce scene1, scene2, scene3
+		QGraphicsScene* cur_scene;           // the scene used to render current game level (2D)
+		std::vector<QGraphicsScene*> levels; 
 		int currentLevelIdx;                 // Indice per sapere in quale parte del livello siamo
 
 
@@ -39,18 +36,9 @@ class Game : public QGraphicsView
 
 		std::vector<QSound*> playlist;
 		std::vector<QSound*> fast_playlist;
-
-		//QSound* music1;					 // level-1's game music
-		//QSound* music2;                  // level-2's game music
-		//QSound* music3;                  // level-3's game music
-		//QSound* fast_music1;             // faster version of music1 
-		//QSound* fast_music2;             // faster version of music2
-		//QSound* fast_music3;             // faster version of music3
-
 		
 		int lives;
 		int score;
-	
 	
 		SpinningItem* spinning_item;
 
@@ -140,3 +128,4 @@ class Game : public QGraphicsView
 
 		void stopGameTime();
 };
+
