@@ -99,10 +99,19 @@ cd Super_mario
 1. Launch Visual Studio and select **"Open a local folder"**.
 2. Navigate to and select the project root directory; Visual Studio will automatically detect the `CMakeLists.txt` file.
 3. From the top menu, navigate to **Project > CMake Settings**.
-4. Locate the **CMake variables and cache** section and click **Add**:
-    * **Name**: `CMAKE_PREFIX_PATH`
-    * **Value**: The local path where you extracted the DevBinaries (e.g., `C:/Qt/5.15.2/msvc2019_64`).
-5. Save the configuration (**Ctrl + S**); Visual Studio will then automatically generate the CMake cache.
+4. Locate the **CMake variables and cache** section. 
+   * **Note:** If the **"Add"** button is missing or you prefer a manual setup, click on **"Edit JSON"** (located at the top right of the panel).
+5. Add the `CMAKE_PREFIX_PATH` variable:
+   * **Via Interface:** Click **Add**, set Name to `CMAKE_PREFIX_PATH`, Type to `PATH`, and Value to your Qt path (e.g., `C:/Qt/5.15.2/msvc2019_64`).
+   * **Via JSON:** Inside the `variables` array of your configuration, paste the following:
+     ```json
+     {
+       "name": "CMAKE_PREFIX_PATH",
+       "value": "C:/Users/giuseppe/Desktop/Qt/5.15.2/msvc2019_64",
+       "type": "PATH"
+     }
+     ```
+6. Save the configuration (**Ctrl + S**); Visual Studio will then automatically generate the CMake cache.
 
 ### 4. Configuration (Linux / macOS - Terminal)
 Open your terminal in the project root directory and execute the following commands:
