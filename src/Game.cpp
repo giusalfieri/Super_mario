@@ -598,13 +598,10 @@ void Game::switchSubLevel(int direction)
 		cur_scene = levels[currentLevelIdx];
 	}
 
-
-	// AGGIUNGI SEMPRE MARIO: lui è l'unica istanza che viaggia tra le scene
 	cur_scene->addItem(mario);
 	mario->setLevelName(cur_level_name);
 
 
-	// Imposta posizione e centra la telecamera immediatamente per evitare il vuoto nero
 	QPointF spawn = getSpawnPoint(currentLevelIdx, direction);
 	mario->setPos(spawn);
 	centerOn(mario);
@@ -660,4 +657,5 @@ void Game::fastResetOfGameTime()
 	game_time->start();
 	Sounds::instance()->play("timer-reset");
 }
+
 
