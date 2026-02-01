@@ -578,7 +578,6 @@ void Game::switchSubLevel(int direction)
 {
 	if (!mario || !cur_scene) return;
 
-	// Rimuovi Mario dalla vecchia scena prima di cambiare indice
 	cur_scene->removeItem(mario);
 
 	currentLevelIdx += direction;
@@ -657,5 +656,6 @@ void Game::fastResetOfGameTime()
 	game_time->start();
 	Sounds::instance()->play("timer-reset");
 }
+
 
 
