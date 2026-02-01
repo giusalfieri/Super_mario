@@ -54,9 +54,7 @@ class Game : public QGraphicsView
 	
 		// utility functions
 		std::string state2str();
-		//void nextLevel();
-		//void prevLevel();
-		void switchSubLevel(int direction);           // Replacement for nextLevel/prevLevel
+		void switchSubLevel(int direction);           
 		QPointF getSpawnPoint(int idx, int direction); // Handles spawn coordinates
 		void fastResetOfGameTime();
 
@@ -128,4 +126,5 @@ class Game : public QGraphicsView
 
 		void stopGameTime();
 };
+
 
