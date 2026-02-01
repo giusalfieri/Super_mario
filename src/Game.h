@@ -23,20 +23,29 @@ class Game : public QGraphicsView
 
 	
 		QGraphicsScene* cur_scene;       // the scene used to render current game level (2D)
-		QGraphicsScene* scene1;          // the scene used to render level-1 
-		QGraphicsScene* scene2;          // the scene used to render level-2 
-		QGraphicsScene* scene3;          // the scene used to render level-3
+		//QGraphicsScene* scene1;          // the scene used to render level-1 
+		//QGraphicsScene* scene2;          // the scene used to render level-2 
+		//QGraphicsScene* scene3;          // the scene used to render level-3
+		std::vector<QGraphicsScene*> levels; // Sostituisce scene1, scene2, scene3
+		int currentLevelIdx;                 // Indice per sapere in quale parte del livello siamo
+
+
 		QGraphicsScene* black_scene;     // the scene displayed when level changes (i.e black screen)
 		Mario* mario;                    // mario object
 		QTimer engine;                   // game engine / timer
 		QTimer* game_time;               // game time remaining
 		game_state cur_state;            // current game state
-		QSound* music1;					 // level-1's game music
-		QSound* music2;                  // level-2's game music
-		QSound* music3;                  // level-3's game music
-		QSound* fast_music1;             // faster version of music1 
-		QSound* fast_music2;             // faster version of music2
-		QSound* fast_music3;             // faster version of music3
+
+
+		std::vector<QSound*> playlist;
+		std::vector<QSound*> fast_playlist;
+
+		//QSound* music1;					 // level-1's game music
+		//QSound* music2;                  // level-2's game music
+		//QSound* music3;                  // level-3's game music
+		//QSound* fast_music1;             // faster version of music1 
+		//QSound* fast_music2;             // faster version of music2
+		//QSound* fast_music3;             // faster version of music3
 
 		
 		int lives;
@@ -57,8 +66,10 @@ class Game : public QGraphicsView
 	
 		// utility functions
 		std::string state2str();
-		void nextLevel();
-		void prevLevel();
+		//void nextLevel();
+		//void prevLevel();
+		void switchSubLevel(int direction);           // Replacement for nextLevel/prevLevel
+		QPointF getSpawnPoint(int idx, int direction); // Handles spawn coordinates
 		void fastResetOfGameTime();
 
 	protected:
