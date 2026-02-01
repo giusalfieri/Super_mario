@@ -27,10 +27,9 @@ Game* Game::instance(QWidget* parent)
 Game::Game(QWidget* parent) : QGraphicsView(parent)
 {
 	// setup scene/view
-	// Inizializzazione scene (vettore levels)
-	levels.push_back(new QGraphicsScene()); // Sostituisce scene1
-	levels.push_back(nullptr);              // Sostituisce scene2 (lazy loading)
-	levels.push_back(nullptr);              // Sostituisce scene3 (lazy loading)
+	levels.push_back(new QGraphicsScene()); 
+	levels.push_back(nullptr);              
+	levels.push_back(nullptr);              
 
 
 	currentLevelIdx = 0;
@@ -55,7 +54,6 @@ Game::Game(QWidget* parent) : QGraphicsView(parent)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
 	// setup game music
-	// Inizializzazione playlist musicale
 	playlist.push_back(new QSound(":/sounds/overworld.wav"));
 	playlist.push_back(new QSound(":/sounds/underwater.wav"));
 	playlist.push_back(new QSound(":/sounds/super-mario-rap.wav"));
@@ -119,18 +117,17 @@ void Game::reset()
 	hurry_up = false; // Reset del flag della musica veloce
 
 	// 4. Pulisci TUTTE le scene caricate nel vettore
-	// Questo sostituisce i blocchi "if (scene2) ..." manuali
 	for (auto& scene : levels)
 	{
-		if (scene != nullptr) // Controllo vitale!
+		if (scene != nullptr) 
 		{
 			scene->clear();
 		}
 	}
 
-	// Nota: manteniamo levels[0] allocato, mentre le altre scene 
-	// verranno ricaricate via Lazy Loading in switchSubLevel.
-	// Se vuoi liberare memoria totalmente: levels[1] = nullptr; levels[2] = nullptr;
+	// N.B: keep levels[0] allocated, while other scenes
+	// will be reloaded via Lazy Loading in switchSubLevel.
+	
 
 	// 5. Reset debug e contatori
 	grid.clear();
@@ -272,20 +269,19 @@ void Game::toogleColliders()
 // play music
 void Game::playMusic()
 {
-	// Verifichiamo che l'indice sia valido per evitare crash
 	if (currentLevelIdx >= 0 && currentLevelIdx < static_cast<int>(playlist.size()))
 	{
 		if (hurry_up)
-			fast_playlist[currentLevelIdx]->play(); // Usa il vettore della musica veloce
+			fast_playlist[currentLevelIdx]->play(); 
 		else
-			playlist[currentLevelIdx]->play();      // Usa il vettore della musica normale
+			playlist[currentLevelIdx]->play();      
 	}
 }
 
 // stop music
 void Game::stopMusic()
 {
-	// Verifichiamo che l'indice sia valido
+
 	if (currentLevelIdx >= 0 && currentLevelIdx < static_cast<int>(playlist.size()))
 	{
 		if (hurry_up)
@@ -664,3 +660,4 @@ void Game::fastResetOfGameTime()
 	game_time->start();
 	Sounds::instance()->play("timer-reset");
 }
+
